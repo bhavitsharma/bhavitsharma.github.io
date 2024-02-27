@@ -39,13 +39,6 @@
     "href": "index.html",
     "title": "Bhavit’s blog",
     "section": "",
-    "text": "cs229 notes\n\n\n\n\n\n\n\n\n\n\n\n\nFeb 27, 2024\n\n\nBhavit Sharma\n\n\n\n\n\n\n  \n\n\n\n\nTransformers from scratch\n\n\n\n\n\n\n\nML\n\n\nLLMs\n\n\nTransformers\n\n\n\n\n\n\n\n\n\n\n\nFeb 27, 2024\n\n\nBhavit Sharma\n\n\n\n\n\n\nNo matching items"
-  },
-  {
-    "objectID": "posts/transformers-from-scratch/index.html",
-    "href": "posts/transformers-from-scratch/index.html",
-    "title": "Transformers from scratch",
-    "section": "",
-    "text": "Why?\nRecently I started learning about transformers. I found the “Attention is all you need” paper extremely hard to read given I had no background related to ML, and the paper contained a lot of concepts which made it difficult. A lot of the blogs explaining transformers straight up just jumped to explaining the architecture instead of setting up the right motivation behind various decisions, including attention.\nThis post is an attempt to bridge the gap between noobs and “Attention is all you need” paper. We’ll go through a journey spanning over a decade to understand the various decisions behind transformers. We’ll also implement toy versions of this techniques for toy datasets like machine-translation.\n\n\nBackground\nTransformers were introduced in 2017’s paper “Attention is all you need”. However, a lot of techniques behind the paper were introduced in other papers.\n\nSequence to Sequence Learning with Neural Networks Ilya et al\nLearning Phrase Representations using RNN Encoder-Decoder for Statistical Machine Translation\nNeural Machine Translation by Jointly Learning to Align and Translate\n\n\n\n\nRNNs\nRNNs were one of the first architectures used to introduce long-range dependencies among sequences.\n\\(x^2=2\\)"
+    "text": "cs229 notes\n\n\n\n\n\n\n\n\n\n\n\n\nFeb 27, 2024\n\n\nBhavit Sharma\n\n\n\n\n\n\nNo matching items"
   }
 ]
