@@ -9,7 +9,7 @@
 <meta name="author" content="Bhavit Sharma">
 <meta name="dcterms.date" content="2024-03-08">
 
-<title>cs229 notes</title>
+<title>Risk and Learning</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -140,7 +140,7 @@ window.Quarto = {
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">cs229 notes</h1>
+      <h1 class="title">Risk and Learning</h1>
                       </div>
   </div>
     
@@ -173,15 +173,16 @@ window.Quarto = {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#matrix-derivatives" id="toc-matrix-derivatives" class="nav-link active" data-scroll-target="#matrix-derivatives">Matrix Derivatives</a>
+  <li><a href="#empirical-risk" id="toc-empirical-risk" class="nav-link active" data-scroll-target="#empirical-risk">Empirical Risk</a></li>
+  <li><a href="#expected-risk" id="toc-expected-risk" class="nav-link" data-scroll-target="#expected-risk">Expected Risk</a></li>
+  <li><a href="#expected-empirical-risk" id="toc-expected-empirical-risk" class="nav-link" data-scroll-target="#expected-empirical-risk">Expected Empirical Risk</a></li>
+  <li><a href="#what-does-minimizing-empirical-risk-mean" id="toc-what-does-minimizing-empirical-risk-mean" class="nav-link" data-scroll-target="#what-does-minimizing-empirical-risk-mean">What does minimizing empirical risk mean?</a>
   <ul class="collapse">
-  <li><a href="#some-useful-identities" id="toc-some-useful-identities" class="nav-link" data-scroll-target="#some-useful-identities">Some useful identities</a></li>
+  <li><a href="#finite-hypothesis-class" id="toc-finite-hypothesis-class" class="nav-link" data-scroll-target="#finite-hypothesis-class">Finite Hypothesis Class</a></li>
+  <li><a href="#proof-sketch" id="toc-proof-sketch" class="nav-link" data-scroll-target="#proof-sketch">Proof Sketch</a></li>
+  <li><a href="#proof" id="toc-proof" class="nav-link" data-scroll-target="#proof">Proof</a></li>
   </ul></li>
-  <li><a href="#prove-that-if-zthz-geq-0-then-h-is-positive-semi-definite-and-cost-function-j-is-convex.-h-is-hessian-matrix-of-j." id="toc-prove-that-if-zthz-geq-0-then-h-is-positive-semi-definite-and-cost-function-j-is-convex.-h-is-hessian-matrix-of-j." class="nav-link" data-scroll-target="#prove-that-if-zthz-geq-0-then-h-is-positive-semi-definite-and-cost-function-j-is-convex.-h-is-hessian-matrix-of-j.">Prove that if <span class="math inline">\(z^THz \geq 0\)</span> then <span class="math inline">\(H\)</span> is positive semi-definite and cost function <span class="math inline">\(J\)</span> is convex. <span class="math inline">\(H\)</span> is Hessian matrix of <span class="math inline">\(J\)</span>.</a>
-  <ul class="collapse">
-  <li><a href="#convex-function" id="toc-convex-function" class="nav-link" data-scroll-target="#convex-function">Convex function</a></li>
-  <li><a href="#convex-functions-properties" id="toc-convex-functions-properties" class="nav-link" data-scroll-target="#convex-functions-properties">Convex functions properties</a></li>
-  </ul></li>
+  <li><a href="#bias-and-variance-tradeoff" id="toc-bias-and-variance-tradeoff" class="nav-link" data-scroll-target="#bias-and-variance-tradeoff">Bias and Variance Tradeoff</a></li>
   </ul>
 </nav>
     </div>
@@ -192,170 +193,181 @@ window.Quarto = {
 
 
 
-<section id="matrix-derivatives" class="level1">
-<h1>Matrix Derivatives</h1>
-<p>Good link: https://www.math.uwaterloo.ca/~hwolkowi/matrixcookbook.pdf</p>
-<section id="some-useful-identities" class="level2">
-<h2 class="anchored" data-anchor-id="some-useful-identities">Some useful identities</h2>
-<ol type="1">
-<li><span class="math display">\[\frac{\partial}{\partial X} \log |X| = X^{-1}\]</span></li>
-</ol>
-<p>Proof: <span class="math display">\[\frac{\partial}{\partial X} \log |X| = \frac{1}{|X|} \frac{\partial |X|}{\partial X}\]</span></p>
-<p>We know that <span class="math display">\[
-(\frac{\partial |X|}{\partial X})_{ij} = \frac{\partial}{\partial X_{ij}} * det(X)
-\]</span></p>
-<p>and <span class="math display">\[
-det(X) = X_{i1} C_{i1} + X_{i2} C_{i2} + \dots + X_{in} C_{in}
-\]</span> where <span class="math inline">\(C_{ij}\)</span> is the cofactor of <span class="math inline">\(X_{ij}\)</span>. So, <span class="math display">\[
-\frac{\partial}{\partial X_{ij}} * det(X) = C_{ij}
-\]</span> <span class="math display">\[
-\frac{\partial |X|}{\partial X} = C = adj(X)^T
-\]</span> where <span class="math inline">\(C\)</span> is the cofactor matrix of <span class="math inline">\(X\)</span>. <span class="math inline">\(adj(X)\)</span> is the adjugate matrix of <span class="math inline">\(X\)</span> and <span class="math inline">\(X^{-1} = \frac{adjX}{|X|}\)</span>.</p>
-<p>so we get <span class="math display">\[
-\frac{\partial}{\partial X} \log |X| = \frac{1}{|X|} \frac{\partial |X|}{\partial X} = \frac{1}{|X|} adj(X)^T = ({X^{-1}})^T
-\]</span></p>
-<p>Reference: <a href="https://www.kamperh.com/notes/kamper_matrixcalculus13.pdf">kamper matrix calculus</a></p>
-<ol start="2" type="1">
-<li><span class="math inline">\(\frac{\partial}{\partial X} (z^TX^{-1}z) = -(X^{-1})zz^T(X^{-1})\)</span></li>
-</ol>
-<p>Proof: <span class="math display">\[
-\frac{\partial}{\partial X} (z^TX^{-1}z)
-\]</span></p>
-<p>Lets first compute the derivative of <span class="math inline">\(z^TX^{-1}z\)</span> with respect to <span class="math inline">\(X_{ij}\)</span> <span class="math display">\[
-\frac{\partial}{\partial X_{ij}} (z^TX^{-1}z)
-\]</span></p>
-<p>Lets first derive <span class="math inline">\(\frac{\partial X^{-1}}{\partial X_{ij}}\)</span> <span class="math display">\[
-\frac{\partial X^{-1}}{\partial X_{ij}}
-\]</span> Using <span class="math inline">\(X * X^{-1} = I\)</span> we get <span class="math display">\[
-X^{-1}\frac{\partial X}{\partial X_{ij}} + \frac{\partial X^{-1}}{\partial X_{ij}}X = 0
-\]</span> i.e. <span class="math display">\[
-\frac{\partial X^{-1}}{\partial X_{ij}} = -X^{-1}\frac{\partial X}{\partial X_{ij}}X^{-1}
-\]</span> where <span class="math inline">\(\frac{\partial X}{\partial X_{ij}}\)</span> is the matrix of partial derivatives of <span class="math inline">\(X\)</span> with respect to <span class="math inline">\(X_{ij}\)</span> and it’s elements are <span class="math inline">\(0\)</span> except for the element at <span class="math inline">\(i,j\)</span> which is <span class="math inline">\(1\)</span>.</p>
-<p>So lets say <span class="math inline">\(H = \frac{\partial\ tr(z^TX^{-1}z)}{\partial X}\)</span> <span class="math display">\[
-H_{ij} = \frac{\partial}{\partial X_{ij}} tr(z^TX^{-1}z)
-\]</span> Using cyclic property of trace we get <span class="math display">\[
-H_{ij} = \frac{\partial}{\partial X_{ij}} tr(z^TX^{-1}z) = \frac{\partial}{\partial X_{ij}} tr(zz^T(X^{-1}))
-\]</span></p>
-<p>We know that <span class="math display">\[
-\partial(Tr(A)) = Tr(\partial(A))
-\]</span> because trace is linear. so <span class="math display">\[
-H_{ij} = tr(zz^T\frac{\partial}{\partial X_{ij}}(X^{-1})) = tr(zz^T(-X^{-1}\frac{\partial X}{\partial X_{ij}}X^{-1}))
-\]</span> Using cyclic property of trace we get</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>We’re going to show that empirical risk is an unbiased estimator of the expected risk.</p>
+</div>
+</div>
+<p>In statistics, if you have a quantity <span class="math inline">\(\theta\)</span> that you want to estimate, but you can only estimate it via some fancy algorithms and random observations. Say you come up with the estimator <span class="math inline">\(\hat{\theta}\)</span>, then <span class="math inline">\(\hat{\theta}\)</span> is an unbiased estimator of <span class="math inline">\(\theta\)</span> if:</p>
 <p><span class="math display">\[
-H_{ij} = tr(X^{-1}zz^TX^{-1}\frac{\partial X}{\partial X_{ij}})
+\mathbb{E}[\hat{\theta}] = \theta
 \]</span></p>
-<p>Now suppose that <span class="math display">\[
-F = X^{-1}zz^TX^{-1}
-\]</span> then <span class="math display">\[
-tr(F\frac{\partial X}{\partial X_{ij}}) = F_{ji} = F_{ij}
-\]</span> since <span class="math inline">\(F\)</span> is symmetric. Hint: You can think of the fact only the <span class="math inline">\(jth\)</span> row of <span class="math inline">\(F\)</span> is multiplied by the <span class="math inline">\(jth\)</span> column, and only <span class="math inline">\(ith\)</span> column of <span class="math inline">\(jth\)</span> row of <span class="math inline">\(F\)</span> is multiplied by the <span class="math inline">\(ith\)</span> row of <span class="math inline">\(jth\)</span> column of <span class="math inline">\(F\)</span> leading to element at <span class="math inline">\(F_{jj}\)</span> contributing and the rest being zero.</p>
-<p>Hence: <span class="math inline">\(H = -X^{-1}zz^TX^{-1}\)</span></p>
-</section>
-</section>
-<section id="prove-that-if-zthz-geq-0-then-h-is-positive-semi-definite-and-cost-function-j-is-convex.-h-is-hessian-matrix-of-j." class="level1">
-<h1>Prove that if <span class="math inline">\(z^THz \geq 0\)</span> then <span class="math inline">\(H\)</span> is positive semi-definite and cost function <span class="math inline">\(J\)</span> is convex. <span class="math inline">\(H\)</span> is Hessian matrix of <span class="math inline">\(J\)</span>.</h1>
-<p>Some definitions first:</p>
-<section id="convex-function" class="level2">
-<h2 class="anchored" data-anchor-id="convex-function">Convex function</h2>
-<p>A function <span class="math inline">\(f\)</span> is convex if for any <span class="math inline">\(x,y \in \mathbb{R}^n\)</span> and <span class="math inline">\(\alpha \in [0,1]\)</span> we have <span class="math display">\[
-f(\alpha x + (1-\alpha)y) \leq \alpha f(x) + (1-\alpha)f(y)
+<p>In general, bias of this estimate <span class="math inline">\(\hat{\theta}\)</span> is defined as: <span class="math display">\[
+\text{Bias}(\hat{\theta}) = \mathbb{E}[\hat{\theta}] - \theta
 \]</span></p>
-<p>This basically means that any line segment between two points on the graph of the function lies above the graph of the function.</p>
-<div class="cell" data-execution_count="1">
-<div class="cell-output cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="index_files/figure-html/cell-2-output-1.png" width="575" height="411" class="figure-img"></p>
-</figure>
-</div>
-</div>
-</div>
-</section>
-<section id="convex-functions-properties" class="level2">
-<h2 class="anchored" data-anchor-id="convex-functions-properties">Convex functions properties</h2>
-<p>Property 1: If <span class="math inline">\(f\)</span> is convex then <span class="math inline">\(f(\alpha x + (1-\alpha)y) \leq \alpha f(x) + (1-\alpha)f(y)\)</span> for any <span class="math inline">\(\alpha \in [0,1]\)</span> and <span class="math inline">\(x,y \in \mathbb{R}^n\)</span>.</p>
-<p><strong>Proof:</strong> Let <span class="math inline">\(x,y \in \mathbb{R}\)</span> and <span class="math inline">\(\alpha \in [0,1]\)</span>. Since any point between <span class="math inline">\(x\)</span> and <span class="math inline">\(y\)</span> on the line segment <span class="math inline">\([x,y]\)</span> is given by <span class="math inline">\(\alpha x + (1-\alpha)y\)</span>, we have the following from the definition of convexity:</p>
-<p>The value of function as point <span class="math inline">\(z = \alpha x + (1-\alpha)y\)</span> is <span class="math inline">\(f(\alpha x + (1-\alpha)y)\)</span>. Now the equation of line is: <span class="math display">\[
-y = y_1 + \frac{y_2 - y_1}{x_2 - x_1}(x - x_1)
-\]</span> Plugging values for <span class="math inline">\(z\)</span> and <span class="math inline">\(x_1, x_2, y_1, y_2\)</span> we get:</p>
+<section id="empirical-risk" class="level1">
+<h1>Empirical Risk</h1>
+<p>We can’t compute the expected risk directly as we don’t know the <em>true</em> data distribution. Instead, we use the empirical risk, which is the average loss over the training data:</p>
 <p><span class="math display">\[
-\begin{split}
-y &amp; = f(x) + \frac{f(y) - f(x)}{y - x}(\alpha.x + (1 - \alpha)y - x) \\
-  &amp;= f(x) + \frac{f(y) - f(x)}{y - x}(y - x)(1 - \alpha) \\
-  &amp;= f(x) (1 - 1 + \alpha) + f(y)(1 - \alpha) \\
-  &amp;= f(x) (\alpha) + f(y)(1 - \alpha) \\
-\end{split}
+R_{\mathcal{D}}(f) = \frac{1}{|\mathcal{D}|} \sum_{(x, y) \in \mathcal{D}} \mathcal{l}(f, (x, y))
 \]</span></p>
-<p>So according to the definition of convexity we have: <span class="math display">\[
-f(\alpha x + (1-\alpha)y) \leq \alpha f(x) + (1-\alpha)f(y)
+<p>We’re assuming we have i.i.d samples from the data distribution.</p>
+</section>
+<section id="expected-risk" class="level1">
+<h1>Expected Risk</h1>
+<p>We want to find a predictive function <span class="math inline">\(f\)</span> from some hypothesis space <span class="math inline">\(\mathcal{H}\)</span> such that <span class="math inline">\(f(x) \approx y\)</span> for all <span class="math inline">\((x, y) \in \mathcal{D}\)</span>, where <span class="math inline">\(\mathcal{D}\)</span> is the training data, and it also minimizes the expected risk.</p>
+<p>Lets say our loss function is <span class="math inline">\(\mathcal{l}(f, \mathcal{Z})\)</span>, where <span class="math inline">\(\mathcal{Z}\)</span> is the data distribution.</p>
+<p>The risk <span class="math inline">\(R(f)\)</span> is defined as the expected loss over the data distribution <span class="math inline">\(\mathcal{D}\)</span>: <span class="math display">\[
+R(f) = \mathbb{E}_{\mathcal{Z}}[\mathcal{l}(f, \mathcal{Z})]
 \]</span></p>
-<p><strong>Property 2</strong>: Suppose <span class="math inline">\(f: \mathcal{R}^n \rightarrow \mathcal{R}\)</span>. Then</p>
-<ol type="1">
-<li><p><span class="math inline">\(f(y) \geq f(x) + \nabla f(x)^T(y-x)\)</span> for all <span class="math inline">\(x,y \in \mathcal{R}^n\)</span> if and only if <span class="math inline">\(f\)</span> is convex</p></li>
-<li><p><span class="math inline">\(\nabla^2 \succeq 0\)</span> if and only if <span class="math inline">\(f\)</span> is convex</p></li>
-</ol>
-<p><strong>Proof</strong>:</p>
-<div class="cell" data-execution_count="2">
-<div class="cell-output cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="index_files/figure-html/cell-3-output-1.png" width="578" height="411" class="figure-img"></p>
-</figure>
+</section>
+<section id="expected-empirical-risk" class="level1">
+<h1>Expected Empirical Risk</h1>
+<p>Now we compute expected empirical risk by considering the distribution over all possible training sets <span class="math inline">\(\mathcal{D}\)</span>:</p>
+<p><span class="math display">\[
+\mathbb{E}_{\mathcal{D}}[R_{\mathcal{D}}(f)] = \mathbb{E}_{\mathcal{D}}\left[\frac{1}{|\mathcal{D}|} \sum_{(x, y) \in \mathcal{D}} \mathcal{l}(f, (x, y))\right]
+\]</span></p>
+<p>Lets say <span class="math inline">\(\mathcal{D} = \{z_1, z_2, \ldots, z_n\}\)</span>, then the expected empirical risk is (because of linearity of expectation):</p>
+<p><span class="math display">\[
+\begin{align*}
+\mathbb{E}_{\mathcal{D}}[R_{\mathcal{D}}(f)] &amp;= \frac{1}{n} \sum_{i=1}^n \mathbb{E}_{z_i}[\mathcal{l}(f, z_i)] \\
+&amp;= \frac{1}{n} \sum_{i=1}^n R(f) \\
+&amp;= R(f)
+\end{align*}
+\]</span></p>
+</section>
+<section id="what-does-minimizing-empirical-risk-mean" class="level1">
+<h1>What does minimizing empirical risk mean?</h1>
+<p>Now, obviously during training, we don’t have the <em>true data distribution</em> <span class="math inline">\(\mathcal{Z}\)</span>, so we can’t minimize the expected risk directly. Instead, we minimize the empirical risk, which is an unbiased estimator of the expected risk. But what guarantees that minimizing the empirical risk will also minimize the expected risk?</p>
+<p>For example, if you overfit the training data, then the empirical risk will be low, but the expected risk will be high.</p>
+<p>Instead of abandoning the Empirical Risk Minimization (ERM) framework, we aim to refine it. We’ll explore conditions ensuring that ERM avoids overfitting. Specifically, we want conditions where good performance on training data by the ERM predictor likely indicates good performance on the overall data distribution.</p>
+<p>A typical approach involves applying the ERM principle within a limited search space. Essentially, the learner pre-selects a set of possible predictors, known as a hypothesis class, denoted by <span class="math inline">\(\mathcal{H}\)</span>. Each hypothesis <span class="math inline">\(h \in \mathcal{H}\)</span> maps inputs from <span class="math inline">\(X\)</span> to outputs in <span class="math inline">\(Y\)</span>. Given a hypothesis class <span class="math inline">\(\mathcal{H}\)</span> and a training sample <span class="math inline">\(S\)</span>, the <span class="math inline">\(\text{ERM}_{\mathcal{H}}\)</span> learner applies the ERM principle to choose a hypothesis <span class="math inline">\(h \in \mathcal{H}\)</span> that minimizes the error on <span class="math inline">\(S\)</span>. Formally, this is expressed as: <span class="math display">\[
+\text{ERM}_{\mathcal{H}}(S) \in \arg \min_{h \in \mathcal{H}} L_S(h),
+\]</span> where <span class="math inline">\(\arg \min\)</span> identifies the set of hypotheses in <span class="math inline">\(\mathcal{H}\)</span> with the minimum error <span class="math inline">\(L_S(h)\)</span> across <span class="math inline">\(\mathcal{H}\)</span>. By limiting the selection to hypotheses from <span class="math inline">\(\mathcal{H}\)</span>, we impose a bias towards certain predictors, referred to as inductive bias. This choice, made before seeing the training data, should ideally rely on prior knowledge about the problem at hand.</p>
+<p>A key question in learning theory is identifying which hypothesis classes ensure <span class="math inline">\(\text{ERM}_{\mathcal{H}}\)</span> does not lead to overfitting.</p>
+<p>In the following sections, we’ll look at some conditions that ensure that minimizing the empirical risk will also minimize the expected risk.</p>
+<section id="finite-hypothesis-class" class="level2">
+<h2 class="anchored" data-anchor-id="finite-hypothesis-class">Finite Hypothesis Class</h2>
+<p>We’re going to look at one proof which says we’re guaranteed to minimize ERM if we have a finite hypothesis class and our <em>true</em> generating function is in the hypothesis class. However, we’re going to make some strong assumptions for this proof, including the loss function and the problem setting.</p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
 </div>
+<div class="callout-title-container flex-fill">
+Important
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The assumptions are really important!! We’re going to relax them in the subsequent sections.</p>
 </div>
 </div>
 <ol type="1">
-<li>Using the definition of convexity we have: <span class="math display">\[
-\begin{split}
-f(\alpha x + (1-\alpha)y) &amp;\leq \alpha f(x) + (1-\alpha)f(y) \\
-f(y) - f(x) \geq \frac{f(x + \alpha(y - x)) - f(x)}{\alpha} \\
-\text{if $\alpha \rightarrow$ 0} \\
-f(y) - f(x) \geq \nabla f(x)^T(y - x) \\
-\end{split}
-\]</span></li>
+<li>We’re looking at a binary classification problem, where <span class="math inline">\(Y = \{-1, 1\}\)</span>.</li>
+<li>The loss function is defined as the fraction of misclassified examples. Let say our distribution is <span class="math inline">\(\mathcal{D}\)</span> and <span class="math inline">\(S\)</span> is a sampled training set from <span class="math inline">\(\mathcal{D}\)</span>, and we have a predictor <span class="math inline">\(h_S: X \to Y\)</span> which is the output of the ERM algorithm. Then the loss function is defined as: <span class="math display">\[
+\mathcal{L_s}(h) = \frac{1}{n} \sum_{i=1}^n \mathbb{I}(h(x_i) \neq y_i)
+\]</span> where <span class="math inline">\(\mathbb{I}\)</span> is the indicator function.</li>
+<li>We’re assuming that the true generating function <span class="math inline">\(f\)</span> is in the hypothesis class <span class="math inline">\(\mathcal{H}\)</span>.</li>
+<li><span class="math inline">\(|\mathcal{H}|\)</span> is finite i.e.&nbsp;the hypothesis class is finite.</li>
 </ol>
-<p>Now we also need to prove the other direction. So suppose <span class="math inline">\(f(y) \geq f(x) + \nabla f(x)^T(y-x)\)</span> for all <span class="math inline">\(x,y \in \mathcal{R}^n\)</span>. We need to prove that <span class="math inline">\(f(\alpha x + (1-\alpha)y) \leq \alpha f(x) + (1-\alpha)f(y)\)</span>. Let’s consider <span class="math inline">\(z = \alpha x + (1-\alpha)y\)</span>. Then we have:</p>
-<p><span class="math display">\[
-\begin{split}
-f(x) &amp;\geq f(z) + \nabla f(z)^T(x - z) \\
-f(y) &amp;\geq f(z) + \nabla f(z)^T(y - z) \\
-\text{Multiply first with $\alpha$ and other by $1 - \alpha$ and add} \\
-\alpha f(x) + (1 - \alpha)f(y) &amp;\geq \alpha f(z) + (1 - \alpha)f(z) + \\ \alpha \nabla f(z)^T(x - z) + (1 - \alpha)\nabla f(z)^T(y - z) \\
-  &amp;\geq f(z) + \nabla f(z)^T(\alpha x + (1 - \alpha)y - z) \\
-\text{Since $\alpha x + (1 - \alpha)y = z$ } \\
-  &amp;\geq f(z) + \nabla f(z)^T(0) \\
-  &amp;\geq f(z) \\
-\end{split}
+</section>
+<section id="proof-sketch" class="level2">
+<h2 class="anchored" data-anchor-id="proof-sketch">Proof Sketch</h2>
+<p>We know we’ll pick the hypothesis <span class="math inline">\(h_S\)</span> that minimizes the empirical risk for the training set <span class="math inline">\(S\)</span>. So <span class="math display">\[
+h_S \in \arg \min_{h \in \mathcal{H}} \mathcal{L}_S(h)
 \]</span></p>
-<ol start="2" type="1">
-<li>Let’s prove the second part. Suppose <span class="math inline">\(\nabla^2 \succeq 0\)</span> then we have:</li>
+<p>We can also pick a bad hypothesis <span class="math inline">\(h\)</span> from the hypothesis class <span class="math inline">\(\mathcal{H}\)</span> such that <span class="math inline">\(\mathcal{L}_S(h) = 0\)</span> - for example - consider a hypothesis that predicts labels given in the training set as is. i.e.</p>
+<!-- h_s = y_i if there exists i in [n] st x_i = x or 0 otherwise -->
+<p><span class="math display">\[
+h_S = \begin{cases}
+y_i &amp; \text{if there exists } i \in [n] \text{ such that } x_i = x \\
+0 &amp; \text{otherwise}
+\end{cases}
+\]</span></p>
+<p>This is saying if I get the same training example, I’ll predict the same label as in the training set, otherwise I’ll predict 0. This obviously is a bad hypothesis, but it has zero empirical risk.</p>
+<p>We want to show in the proof that the probability of picking such a bad hypothesis is low (those who have 0 empirical risk) in our setting.</p>
+<ol type="1">
+<li>Since, <span class="math inline">\(f \in \mathcal{H}\)</span>, we know that true risk of <span class="math inline">\(f\)</span> is 0, which means when searching for the best hypothesis we can ignore any hypothesis that has a non-zero empirical risk.</li>
+<li>Now that we’ve picked the best hypothesis <span class="math inline">\(h_S\)</span> who has an empirical risk of 0, there can be bad hypothesis <span class="math inline">\(h\)</span> such that <span class="math inline">\(\mathcal{L}_S(h) = 0\)</span> (an example is shown above) and good hypothesis <span class="math inline">\(h\)</span> such that <span class="math inline">\(\mathcal{L}_S(h) = 0\)</span>.</li>
+<li>We’ll also denote a quantity <span class="math inline">\(\mathcal{L}_{\mathcal{D}, f}(h)\)</span> which is the true risk of the hypothesis <span class="math inline">\(h\)</span> with respect to the true distribution <span class="math inline">\(\mathcal{D}\)</span> and the true generating function <span class="math inline">\(f\)</span>.</li>
+<li>Clearly for bad hypothesis <span class="math inline">\(h\)</span>, <span class="math inline">\(\mathcal{L}_{\mathcal{D}, f}(h) &gt; 0\)</span>. Since our loss function is the fraction of misclassified examples, we’ll say that our hypothesis <span class="math inline">\(h\)</span> is bad if <span class="math inline">\(\mathcal{L}_{\mathcal{D}, f}(h) &gt; \epsilon\)</span> for some <span class="math inline">\(\epsilon &gt; 0\)</span>. <span class="math inline">\(\epsilon\)</span> is the margin of error we’re willing to tolerate.</li>
+<li>This means that good hypothesis <span class="math inline">\(h\)</span> will have <span class="math inline">\(\mathcal{L}_{\mathcal{D}, f}(h) \leq \epsilon\)</span>.</li>
+<li>Therefore, we’re interested in upper bounding the probability of picking a bad hypothesis <span class="math inline">\(h\)</span>.</li>
+<li>Points in the training sample <span class="math inline">\(S\)</span> are drawn i.i.d from the true distribution <span class="math inline">\(\mathcal{D}\)</span>.</li>
 </ol>
-<p>Let us first prove it for <span class="math inline">\(f: \mathbb{R} \rightarrow \mathbb{R}\)</span>. Let <span class="math inline">\(x, y \in dom(f)\)</span> and <span class="math inline">\(x \leq y\)</span> then we have: <span class="math display">\[
-\begin{split}
-f(y) - f(x) &amp;\geq f'(x)(y - x) \\
-f(x) - f(y) &amp;\geq f'(y)(x - y) \\
-\implies \frac{f'(x) - f'(y)}{x - y} &amp;\geq 0 \\
-\text{if $x \rightarrow y$ then} \\
-\frac{f'(x) - f'(y)}{x - y} \rightarrowtail f''(x) \geq 0 \\
-\end{split}
+</section>
+<section id="proof" class="level2">
+<h2 class="anchored" data-anchor-id="proof">Proof</h2>
+<p>Given our proof outline, lets formalize the proof.</p>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Important
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Remember that we’re picking the best hypothesis <span class="math inline">\(h_S\)</span> that minimizes the empirical risk for the training set <span class="math inline">\(S\)</span>. So it’s possible we might pick a bad hypothesis <span class="math inline">\(h\)</span> such that <span class="math inline">\(\mathcal{L}_S(h) = 0\)</span>. It also means we might a good hypothesis <span class="math inline">\(h\)</span> such that <span class="math inline">\(\mathcal{L}_S(h) = 0\)</span>.</p>
+</div>
+</div>
+<p>We want to upper bound this quantity: <span class="math display">\[
+Pr[S : \mathcal{L}_{\mathcal{D}, f}(h_S) &gt; \epsilon]
 \]</span></p>
-<p>We can prove the other direction using the mean value version of the Taylor’s theorem. Suppose <span class="math inline">\(f''(x) \geq 0\)</span> then there exists a point <span class="math inline">\(z \in (x, y)\)</span> such that:</p>
-<p><span class="math display">\[
-\begin{split}
-f(y) = f(x) + f'(x)(y - x) + f''(z)\frac{(y - x)^2}{2} \\
-\text{Since $f''(z) \geq 0$} \\
-f(y) \geq f(x) + f'(x)(y - x) \\
-\end{split}
+<p>This basically says that the probability of the samples <span class="math inline">\(S\)</span> such that the true risk of the hypothesis <span class="math inline">\(h_S\)</span> is greater than <span class="math inline">\(\epsilon\)</span> is upper bounded by some quantity.</p>
+<p>Now lets say define the <span class="math inline">\(H_B\)</span> as the set of bad hypothesis (all possible) <span class="math display">\[
+H_B = \{h \in \mathcal{H} : \mathcal{L}_{\mathcal{D}, f}(h) &gt; \epsilon\}
 \]</span></p>
-<p>Now we need to prove the same for <span class="math inline">\(f: \mathbb{R}^n \rightarrow \mathbb{R}\)</span>. Remember that a convex function is convex along all lines. i.e.&nbsp;if <span class="math inline">\(f: \mathbb{R}^n \rightarrow \mathbb{R}\)</span> is convex then <span class="math inline">\(g(\alpha) = f(x + \alpha(v))\)</span> is convex for all <span class="math inline">\(x \in \mathbb{R}^n\)</span> and <span class="math inline">\(v \in \mathbb{R}^n\)</span>.</p>
+<p>Now lets consider the set of all possible training sets <span class="math inline">\(S\)</span> which contains atleast one bad hypothesis <span class="math inline">\(h \in H_B\)</span>:</p>
 <p><span class="math display">\[
-\begin{split}
-g''(\alpha) = v^T\nabla^2 f(x + \alpha v) v \\
-\end{split}
+M = \{S : \exists h \in H_B \text{ such that } \mathcal{L}_S(h) = 0\}
+\]</span></p>
+<p>Now we’re going to use a trick in probability theory to upper bound the probability of <span class="math inline">\(M\)</span>. We can write <span class="math inline">\(M\)</span> as a union over all bad hypothesis <span class="math inline">\(h \in H_B\)</span>:</p>
+<p><span class="math display">\[
+M = \bigcup_{h \in H_B} \{S : \mathcal{L}_S(h) = 0\}
+\]</span></p>
+<p>Now we can use the union bound to upper bound the probability of <span class="math inline">\(M\)</span>:</p>
+<p><span class="math display">\[
+Pr[S: \mathcal{L}_{\mathcal{D}, f}(h_S) &gt; \epsilon] \leq Pr[M] \leq \sum_{h \in H_B} Pr[\{S : \mathcal{L}_S(h) = 0\}]
+\]</span></p>
+<p>This is because <span class="math inline">\(M\)</span> is superset of all the events <span class="math inline">\(\{S : \mathcal{L}_S(h) = 0\}\)</span>. and also <span class="math inline">\(Pr(A \cup B) \leq Pr(A) + Pr(B)\)</span>.</p>
+<p>Now, for a single hypothesis <span class="math inline">\(h \in H_B\)</span>, we can upper bound the probability of picking a training set <span class="math inline">\(S\)</span> such that <span class="math inline">\(\mathcal{L}_S(h) = 0\)</span> which means for training points <span class="math inline">\(x_i\)</span> such that <span class="math inline">\(h(x_i) = y_i\)</span> for all <span class="math inline">\(1 \leq i \leq n\)</span>.</p>
+<p>Since <span class="math inline">\(h\)</span> is a bad hypothesis, we know that <span class="math inline">\(\mathcal{L}_{\mathcal{D}, f}(h) &gt; \epsilon\)</span>, this means the <span class="math inline">\(Pr[h[x_i] = y_i] \leq 1 - \epsilon\)</span> for all <span class="math inline">\(1 \leq i \leq n\)</span>.</p>
+<p>Now, combining all the above, we get: <span class="math display">\[
+Pr[S: \mathcal{L}_S(h) = 0] = \prod_{i=1}^n Pr[h(x_i) = y_i] \leq (1 - \epsilon)^n
+\]</span></p>
+<p>So,</p>
+<p><span class="math display">\[
+Pr[S: \mathcal{L}_{\mathcal{D}, f}(h_S) &gt; \epsilon] \leq \sum_{h \in H_B} (1 - \epsilon)^n \\
+\leq |H_B| (1 - \epsilon)^n
+\]</span></p>
+<p>Since <span class="math inline">\(|H_B|\)</span> is finite, we can choose <span class="math inline">\(n\)</span> large enough such that <span class="math inline">\((1 - \epsilon)^n\)</span> is small enough and tends to 0.</p>
+<p>References: https://www.wikiwand.com/en/Empirical_risk_minimization</p>
+</section>
+</section>
+<section id="bias-and-variance-tradeoff" class="level1">
+<h1>Bias and Variance Tradeoff</h1>
+<p>Let <span class="math inline">\(x\)</span> be fixed, <span class="math inline">\(y\)</span> be “true” value, and <span class="math inline">\(\hat{y}\)</span> be the prediction (assuming <span class="math inline">\(f^*\)</span> is the best possible prediction and <span class="math inline">\(Y = f^*(x)\)</span>). Then the expected risk can be decomposed in terms of bias and variance as follows.</p>
+<p>If we consider that the training set <span class="math inline">\(\mathcal{D} = \{z_1, z_2, \ldots, z_n\}\)</span> is a random quantity, then <span class="math inline">\(f^*\)</span> is random and consequently, so is <span class="math inline">\(\hat{y}\)</span>. The expected risk can be decomposed as follows:</p>
+<p><span class="math display">\[
+\begin{align*}
+\mathbb{E}_{\mathcal{D}}(\hat{y} - y)^2 &amp;= \mathbb{E}_{\mathcal{D}}(\hat{y}^2 -2\hat{y}y + y^2) \\
+&amp;= \mathbb{E}_{\mathcal{D}}(\hat{y}^2) - 2\mathbb{E}_{\mathcal{D}}(\hat{y}y) + y^2 \\
+&amp;= \mathbb{E}_{\mathcal{D}}(\hat{y}^2) - \mathbb{E}_{\mathcal{D}}(\hat{y})^2 + \mathbb{E}_{\mathcal{D}}(\hat{y})^2 - 2\mathbb{E}_{\mathcal{D}}(\hat{y}y) + y^2 \\
+&amp;= \text{Bias} + \text{Variance}
+\end{align*}
 \]</span></p>
 
 
-</section>
 </section>
 
 </main> <!-- /main -->

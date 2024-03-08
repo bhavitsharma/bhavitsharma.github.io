@@ -2,6 +2,7 @@
   {
     "listing": "/index.html",
     "items": [
+      "/posts/risk-and-bias/index.html",
       "/posts/cs229-notes-p1/index.html"
     ]
   }
